@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Clicker</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0e68c; /* Cor de fundo */
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #cookie {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            flex-wrap: wrap;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-right: 50px;
+        }
+        .chocolate-drop {
+            width: 30px;
+            height: 30px;
+            background-color: #4B3D2B; /* Cor das gotas de chocolate */
+            border-radius: 50%;
+            margin: 5px;
+        }
+        .upgrade {
+            width: 50px;
+            height: 50px;
+            background-color: #000; /* Cubo preto */
+            margin: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .upgrade:hover {
+            background-color: #444; /* Cor ao passar o mouse */
+        }
+        #level {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        #cookies {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        #cursor {
+            width: 40px;
+            height: 40px;
+            background-color: #FFD700; /* Cor do cursor */
+            border-radius: 50%;
+            position: relative;
+            margin-top: 20px;
+            display: none; /* Inicia escondido */
+        }
+    </style>
+</head>
+<body>
+
+<div id="cookie" onclick="clickCookie()">
+    <div class="chocolate-drop"></div>
+    <div class="chocolate-drop"></div>
+    <div class="chocolate-drop"></div>
+    <div class="chocolate-drop"></div>
+    <div class="chocolate-drop"></div>
+    <div class="chocolate-drop"></div>
+</div>
+<div id="upgrades">
+    <h2>Upgrades</h2>
+    <div id="upgrade1" class="upgrade" onclick="buyUpgrade(1)">10</div>
+    <div id="upgrade2" class="upgrade" onclick="buyUpgrade(2)" style="display:none;">20</div>
+    <div id="upgrade3" class="upgrade" onclick="buyUpgrade(3)" style="display:none;">40</div>
+    <div id="upgrade4" class="upgrade" onclick="buyUpgrade(4)" style="display:none;">80</div>
+    <div id="upgrade5" class="upgrade" onclick="buyUpgrade(5)" style="display:none;">160</div>
+    <div id="upgrade6" class="upgrade" onclick="buyUpgrade(6)" style="display:none;">320</div>
+    <div id="upgrade7" class="upgrade" onclick="buyUpgrade(7)" style="display:none;">640</div>
+    <div id="upgrade8" class="upgrade" onclick="buyUpgrade(8)" style="display:none;">1280</div>
+</div>
+<div id="cursor" onclick="buyCursor()">Cursor</div>
+<div id="level">Nível: 1</div>
+<div id="cookies">Cookies: 0</div>
+
+<script>
+    let cookies = 0;
+    let clickPower = 1;
+    let upgradeLevel = 0;
+    let nextUpgradePrice = 10;
+    let cursorPower = 0;
+
+    function clickCookie() {
+        cookies += clickPower;
+        updateDisplay();
+        showClickEffect();
+    }
+
+    function showClickEffect() {
+        const effect = document.createElement('div');
+        effect.style.position = 'absolute';
+        effect.style.top = '50%';
+        effect.style.left = '50%';
+        effect.style.transform = 'translate(-50%, -50%)';
+        effect.style.fontSize = '24px';
+        effect.style.color = 'red';
+        effect.innerText = '+1';
+        document.getElementById('cookie').appendChild(effect);
+        setTimeout(() => effect.remove(), 500); // Remove o efeito após 0.5s
+    }
+
+    function buyUpgrade(upgradeNum) {
+        if (cookies >= nextUpgradePrice) {
+            cookies -= nextUpgradePrice;
+            upgradeLevel++;
+
+            // Aumentar o poder de clique
+            clickPower *= 2;
+
+            // Atualizar o preço do próximo upgrade
+            if (upgradeLevel % 10 === 0) {
+                nextUpgradePrice *= 2; // Dobra o preço a cada 10 upgrades
+            } else {
+                nextUpgradePrice += 10; // Aumenta o preço padrão
+            }
+
+            // Esconder o upgrade anterior
+            const currentUpgrade = document.getElementById(`upgrade${upgradeNum}`);
+            currentUpgrade.style.display = 'none';
+
+            // Mostrar a próxima atualização
+            const nextUpgrade = document.getElementById(`upgrade${upgradeNum + 1}`);
+            if (nextUpgrade) {
+                nextUpgrade.style.display = 'block'; // Torna visível o próximo upgrade
+            }
+
+            // Mostrar o cursor após 5 upgrades
+            if (upgradeLevel === 5) {
+                document.getElementById('cursor').style.display = 'block';
+            }
+
+            // Atualizar o display
+            updateDisplay();
+        } else {
+            alert("Você não tem cookies suficientes!");
+        }
+    }
+
+    function buyCursor() {
+        cursorPower++;
+        setInterval(() => {
+            cookies += cursorPower;
+            updateDisplay();
+        }, 1000); // O cursor clica a cada segundo
+    }
+
+    function updateDisplay() {
+        document.getElementById('cookies').innerText = `Cookies: ${cookies}`;
+        document.getElementById('level').innerText = `Nível: ${Math.floor(upgradeLevel / 5) + 1}`; // Nível baseado em upgrades
+    }
+</script>
+
+</body>
+</html>
